@@ -45,12 +45,43 @@ public class MatrixList
 
     public int getData_i_j (int i, int j)
     {
-        return 0;
+        IntNodeMat current = _m00;
+        int counter = 0;
+        int Secondcounter = 0;
+        while (current != null){
+            if (counter == i){
+                while (current != null){
+                    if (Secondcounter == j){
+                        return current.getData();
+                    }
+                    current = current.getNextRow();
+                    Secondcounter++;
+                }
+            }
+            current = current.getNextCol();
+            i++;
+        }
+        return Integer.MIN_VALUE;
     }
 
-    public void setData_i_j (int data, int i, int j)
+    public void setData_i_j(int num, int i, int j)
     {
-
+        IntNodeMat current = _m00;
+        int counter = 0;
+        int Secondcounter = 0;
+        while (current != null){
+            if (counter == i){
+                while (current != null){
+                    if (Secondcounter == j){
+                        current.setData(num);
+                    }
+                    current = current.getNextRow();
+                    Secondcounter++;
+                }
+            }
+            current = current.getNextCol();
+            i++;
+        }
     }
 
 
@@ -68,12 +99,41 @@ public class MatrixList
 
     public int findMax()
     {
-        return 0;
+        return findMax(_m00, _m00.getData(), 0 , 0);
     }
 
-    public int howManyX(int x)
-    {
-        return 0;
+    private int findMax(IntNodeMat current, int max){
+        if (current == null){
+            return max;
+        }
+        if (current.getData() > max){
+            return Math.max(
+                    findMax(current.getNextRow(), current.getData()),
+                    findMax(current.getNextCol(), current.getData())
+            );
+        }
+
+        return  Math.max(
+                findMax(current.getNextRow(), max),
+                findMax(current.getNextCol(), max)
+        );
+    }
+
+    // O(n+m) time Compelxity O(1) space Compelxity
+    public int howManyX(int x){
+        IntNodeMat current = _m00;
+        int counter = 0;
+        while (current.getData() <= x){
+            while (current.getData() <= x){
+                if (current.getData() == x){
+                    counter++;
+                    break;
+                }
+                current = current.getNextCol();
+            }
+            current = current.getNextRow();
+        }
+        return counter;
     }
 
 }
