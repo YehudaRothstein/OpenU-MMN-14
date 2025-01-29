@@ -15,31 +15,44 @@ public class MatrixList
 
     public MatrixList(int[][]mat)
     {
-        IntNodeMat first =  new IntNodeMat(mat[0][0]);
-        arrayToLinkedList(mat, 0, 0, first, first);
+        _m00 =  new IntNodeMat(mat[0][0]);
+        arrayToLinkedList(mat, 0, 0, _m00, _m00, null, null);
     }
 
-    private IntNodeMat arrayToLinkedList(int[][] mat, int i, int j, IntNodeMat current, IntNodeMat first){
+    private IntNodeMat arrayToLinkedList(int[][] mat, int i, int j,
+                                         IntNodeMat current, IntNodeMat firstInRow,
+                                         IntNodeMat prevRow, IntNodeMat prevCol
+    ){
         if ((!(i < mat.length)) || (!(j < mat[0].length))){
             return null;
         }
 
+
         if (current != null){
             current.setData(mat[i][j]);
-            current.setNextCol(j < mat[i].length-1? new IntNodeMat(mat[i][j+1]): null);
+            current.setPrevCol(j > 0? prevCol: null);
+            current.setPrevRow(i > 0? prevRow: null);
+            if (current.getPrevRow() == null){
+                current.setNextCol(j < mat[i].length-1? new IntNodeMat(mat[i][j+1]): null);
+
+            } else  {
+                current.setNextCol(prevRow.getNextCol() == null? null : prevRow.getNextCol().getNextRow());
+            }
             current.setNextRow(i < mat.length-1? new IntNodeMat(mat[i+1][j]): null);
-            current.setPrevCol(j >= 1? current.getPrevCol(): null);
-            current.setPrevRow(i >= 1? current.getPrevRow(): null);
-            System.out.println(current);
-            System.out.println(current.getNextCol());
-            System.out.println(current.getPrevCol());
-            System.out.println(current.getPrevRow());
-            System.out.println(current.getNextRow());
+//            System.out.println("\t"+current.getPrevRow());
+//            System.out.println(current.getPrevCol() + "\t" + current + "\t" + current.getNextCol());
+//            System.out.println("\t"+current.getNextRow());
+//            System.out.println("------------------------------------------");
+
         }
         if ((j >= mat[i].length-1 )){
-            return arrayToLinkedList(mat,i+1, 0, first.getNextRow(), first.getNextRow());
+            return arrayToLinkedList(mat,i+1, 0, firstInRow.getNextRow(), firstInRow.getNextRow(),firstInRow, prevCol);
         }
-        return arrayToLinkedList(mat, i, j+1, current.getNextCol(), first);
+        if (prevRow == null)
+            return arrayToLinkedList(mat, i, j+1, current.getNextCol(), firstInRow, prevRow, current);
+
+        return arrayToLinkedList(mat, i, j+1, current.getNextCol(), firstInRow, prevRow.getNextCol(), current);
+
     }
 
 
@@ -47,41 +60,26 @@ public class MatrixList
     {
         IntNodeMat current = _m00;
         int counter = 0;
-        int Secondcounter = 0;
-        while (current != null){
-            if (counter == i){
-                while (current != null){
-                    if (Secondcounter == j){
-                        return current.getData();
-                    }
-                    current = current.getNextRow();
-                    Secondcounter++;
-                }
-            }
+        while (counter != j){
             current = current.getNextCol();
-            i++;
+            counter++;
         }
-        return Integer.MIN_VALUE;
+        if (current == null)
+            return Integer.MIN_VALUE;
+
+        counter = 0;
+        while (counter != i){
+            current = current.getNextRow();
+            counter++;
+        }
+        if (current == null)
+            return Integer.MIN_VALUE;
+        return current.getData();
     }
 
     public void setData_i_j(int num, int i, int j)
     {
-        IntNodeMat current = _m00;
-        int counter = 0;
-        int Secondcounter = 0;
-        while (current != null){
-            if (counter == i){
-                while (current != null){
-                    if (Secondcounter == j){
-                        current.setData(num);
-                    }
-                    current = current.getNextRow();
-                    Secondcounter++;
-                }
-            }
-            current = current.getNextCol();
-            i++;
-        }
+        getData(i , j).setData(num);
     }
 
 
@@ -99,7 +97,7 @@ public class MatrixList
 
     public int findMax()
     {
-        return findMax(_m00, _m00.getData(), 0 , 0);
+        return findMax(_m00, _m00.getData());
     }
 
     private int findMax(IntNodeMat current, int max){
@@ -120,20 +118,42 @@ public class MatrixList
     }
 
     // O(n+m) time Compelxity O(1) space Compelxity
-    public int howManyX(int x){
+    public int howManyX(int x) {
         IntNodeMat current = _m00;
         int counter = 0;
-        while (current.getData() <= x){
-            while (current.getData() <= x){
-                if (current.getData() == x){
-                    counter++;
-                    break;
-                }
+
+        while (current != null) {
+            if (current.getData() == x) {
+                counter++;
                 current = current.getNextCol();
+            } else if (current.getData() < x) {
+                current = current.getNextCol();
+            } else {
+                current = current.getNextRow();
             }
-            current = current.getNextRow();
         }
         return counter;
     }
 
+
+    public IntNodeMat getData (int i, int j)
+    {
+        IntNodeMat current = _m00;
+        int counterRow = 0;
+        int couterCol = 0;
+        while (current != null){
+            if (counterRow == i){
+                while (current != null){
+                    if (couterCol == j){
+                        return current;
+                    }
+                    current = current.getNextCol();
+                    couterCol++;
+                }
+            }
+            current = current.getNextRow();
+            counterRow++;
+        }
+        return null;
+    }
 }
