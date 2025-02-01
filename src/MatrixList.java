@@ -150,7 +150,7 @@ public class MatrixList
         if (node == null)
             return "";
 
-        // if is the last node dont print the tab
+        // if is the last node don't print the tab
         if (node.getNextCol() == null)
             return "" + node.getData()+"\n";
 
@@ -209,29 +209,29 @@ public class MatrixList
     }
 
     // O(n+m) time Compelxity O(1) space Compelxity
-    public int howManyX(int x){
+    public int howManyX(int x) {
         IntNodeMat current = _m00;
         int counter = 0;
-        while ( current.getData() <= x ) {
-            while (current.getData() <= x){
-                if (current.getData() == x){
-                    counter++;
-                    break;
-                }
-                if (current.getNextCol() != null){
-                    current = current.getNextCol();
-                } else {
-                    break;
-                }
-            }
-            if (current.getNextRow() != null){
+
+        // Move to the top-right corner
+        while (current.getNextCol() != null) {
+            current = current.getNextCol();
+        }
+
+        while (current != null) {
+            if (current.getData() == x) {
+                counter++;
                 current = current.getNextRow();
+            } else if (current.getData() > x) {
+                current = current.getPrevCol();
             } else {
-                break;
+                current = current.getNextRow();
             }
         }
+
         return counter;
     }
+
 
     /**
      * get the node with given pointers of a 2d field
@@ -240,36 +240,7 @@ public class MatrixList
      * @return the correspunding node
      */
     private IntNodeMat getNode(int i, int j) {
-        if (i < 0 || j < 0 || _m00 == null)
-            return null;
-
-        IntNodeMat current = _m00;
-        int counter = 0;
-        while (counter != j){
-            if (current.getNextCol() == null){
-                if (counter+1 == j)
-                    current = current.getNextCol();
-                return null;
-            }
-            current = current.getNextCol();
-            counter++;
-        }
-        if (current == null)
-            return null;
-
-        counter = 0;
-        while (counter != i){
-            if (current.getNextRow() == null){
-                if (counter+1 == j)
-                    current = current.getNextRow();
-                return null;
-            }
-            current = current.getNextRow();
-            counter++;
-        }
-        if (current == null)
-            return null;
-        return current;
+        return null;
     }
 
 }
