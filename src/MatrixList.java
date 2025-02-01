@@ -22,7 +22,7 @@ public class MatrixList
             // set the head node to the top left cell
             _m00 = new IntNodeMat(mat[0][0]);
             // initialize the Linked List with the basic values,
-            // for the first cell the previous Row and previous Collum is pointing to null
+            // for the first cell the previous Row and previous column is pointing to null
             arrayToLinkedList(mat, 0, 0, _m00, _m00, null, null);
         }
     }
@@ -30,12 +30,12 @@ public class MatrixList
     /**
      * a recursive function to create a linked list form a 2D array
      * @param mat the 2d array
-     * @param i the cuurent row in the matrix
-     * @param j the current collum in the matrix
+     * @param i the current row in the matrix
+     * @param j the current column in the matrix
      * @param current current node
      * @param firstInRow first node in the linked list for reset
      * @param prevRow the previous row of the current node
-     * @param prevCol the previous collum of the current node
+     * @param prevCol the previous column of the current node
      * @return the next node to connect
      */
     private IntNodeMat arrayToLinkedList(int[][] mat, int i, int j,
@@ -51,7 +51,7 @@ public class MatrixList
         if (current != null){
             // set the data of the current node to the corresponding cell in the matrix
             current.setData(mat[i][j]);
-            // set the previous row and collum to the given parameter if it should
+            // set the previous row and column to the given parameter if it should
             current.setPrevCol(j > 0? prevCol: null);
             current.setPrevRow(i > 0? prevRow: null);
             // create new nodes if you are in the first row
@@ -79,7 +79,7 @@ public class MatrixList
     /**
      * get the data of given pointers in 2d field
      * @param i the row of the data
-     * @param j the collum of the data
+     * @param j the column of the data
      * @return the data for those pointers
      */
     public int getData_i_j (int i, int j) {
@@ -89,11 +89,11 @@ public class MatrixList
         }
         IntNodeMat current = _m00;
         int counter = 0;
-        // go to the correct collum
+        // go to the correct column
         while (counter != j){
             // check if the current is pointing to null
             if (current.getNextCol() == null){
-                // if the last collum is the correct collum, point to it
+                // if the last column is the correct column, point to it
                 if (counter+1 == j)
                     current = current.getNextCol();
                 return Integer.MIN_VALUE;
@@ -123,7 +123,7 @@ public class MatrixList
      * set the data of given pointers in 2d field
      * @param num the value to change
      * @param i the row of the data
-     * @param j the collum of the data
+     * @param j the column of the data
      */
     public void setData_i_j(int num, int i, int j) {
         //check if the node to set the data is null
@@ -152,9 +152,9 @@ public class MatrixList
 
         // if is the last node don't print the tab
         if (node.getNextCol() == null)
-            return "" + node.getData()+"\n";
+            return node.getData()+"\n";
 
-        // recursivley prinbt the row
+        // recursively print the ro
         return node.getData()  + "\t" + printRow(node.getNextCol());
     }
 
@@ -180,8 +180,11 @@ public class MatrixList
      * @return the value of the highest valued node
      */
     public int findMax(){
+        if (_m00 != null){
+            return findMax(_m00, _m00.getData());
+        }
+        return Integer.MIN_VALUE;
         // initiaize the recursive function with the basic values
-        return findMax(_m00, _m00.getData());
     }
 
     /**
@@ -191,7 +194,7 @@ public class MatrixList
      * @return the value of the highest valued node
      */
     private int findMax(IntNodeMat current, int max){
-        //check if the cuurent node isi'nt out of bounds
+        //check if the current node isi'nt out of bounds
         if (current == null)
             return max;
         //check if the current value is bigger than the maximumn
@@ -201,7 +204,7 @@ public class MatrixList
                     findMax(current.getNextCol(), current.getData())
             );
         }
-        // if the cuurent value isint bigger
+        // if the current value isint bigger
         return  Math.max(
                 findMax(current.getNextRow(), max),
                 findMax(current.getNextCol(), max)
@@ -209,7 +212,13 @@ public class MatrixList
     }
 
     // O(n+m) time Compelxity O(1) space Compelxity
+    // The complexity is O(m+n) because the algorithm starts at the top-right of the matrix
+    // and moves only left or down. Since the matrix is sorted, every move skips checking a whole row or column,
+    // making it much faster than checking every element.
     public int howManyX(int x) {
+        if (_m00 == null)
+            return 0;
+
         IntNodeMat current = _m00;
         int counter = 0;
 
@@ -219,9 +228,11 @@ public class MatrixList
         }
 
         while (current != null) {
+            // if in the correct position go to the next row
             if (current.getData() == x) {
                 counter++;
                 current = current.getNextRow();
+                // if overshot the cell go back
             } else if (current.getData() > x) {
                 current = current.getPrevCol();
             } else {
@@ -236,7 +247,7 @@ public class MatrixList
     /**
      * get the node with given pointers of a 2d field
      * @param i the row of the node
-     * @param j the collum of the node
+     * @param j the column of the node
      * @return the correspunding node
      */
     private IntNodeMat getNode(int i, int j) {
@@ -246,11 +257,11 @@ public class MatrixList
         }
         IntNodeMat current = _m00;
         int counter = 0;
-        // go to the correct collum
+        // go to the correct column
         while (counter != j){
             // check if the current is pointing to null
             if (current.getNextCol() == null){
-                // if the last collum is the correct collum, point to it
+                // if the last column is the correct column, point to it
                 if (counter+1 == j)
                     current = current.getNextCol();
                 return null;
