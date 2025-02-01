@@ -240,7 +240,40 @@ public class MatrixList
      * @return the correspunding node
      */
     private IntNodeMat getNode(int i, int j) {
-        return null;
+        //check if the pointer or head node are in bound
+        if (i < 0 || j < 0 || _m00 == null){
+            return null;
+        }
+        IntNodeMat current = _m00;
+        int counter = 0;
+        // go to the correct collum
+        while (counter != j){
+            // check if the current is pointing to null
+            if (current.getNextCol() == null){
+                // if the last collum is the correct collum, point to it
+                if (counter+1 == j)
+                    current = current.getNextCol();
+                return null;
+            }
+            current = current.getNextCol();
+            counter++;
+        }
+
+        counter = 0;
+        // go to the correct row
+        while (counter != i){
+            // check if the current is pointing to null
+            if (current.getNextRow() == null){
+                // if the last row is the correct row, point to it
+                if (counter+1 == j)
+                    current = current.getNextRow();
+                return null;
+            }
+            current = current.getNextRow();
+            counter++;
+        }
+
+        return current;
     }
 
 }
